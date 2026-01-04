@@ -1,0 +1,23 @@
+# Virtual environment
+.venv/
+
+# Videos
+*.mp4
+output_videos/
+
+# Models
+models/*.pt
+models/*.onnx
+models/*.h5
+
+# Data
+*.csv
+data/
+datasets/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
