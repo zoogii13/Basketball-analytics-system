@@ -8,8 +8,9 @@ from collections import defaultdict
 import tempfile
 import subprocess
 import os
+from dotenv import load_dotenv
+load_dotenv()
 from groq import Groq
-from configs import APIKEY
 
 
 st.set_page_config(
@@ -365,7 +366,7 @@ with tabs[3]:
     question = st.text_area("Ask the coach:")
 
     if st.button("Ask Coach") and question:
-        client = Groq(api_key=os.getenv("APIKEY")
+        client = Groq(api_key=os.getenv("APIKEY"))
 
         prompt = f"""
         You are 'CoachAI', an elite Tactical Analyst for an NBA team. 
