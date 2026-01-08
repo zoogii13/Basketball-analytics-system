@@ -11,18 +11,15 @@ import os
 from groq import Groq
 from configs import APIKEY
 
-# --------------------------------
-# PAGE CONFIG
-# --------------------------------
+
 st.set_page_config(
     page_title="AI Basketball Analytics Dashboard",
     layout="wide",
     page_icon="🏀"
 )
 
-# --------------------------------
-# SIDEBAR – FILE UPLOAD ONLY
-# --------------------------------
+
+# SIDEBAR 
 st.sidebar.title("Upload Match Video")
 
 # 1. Upload Raw Video
@@ -62,9 +59,8 @@ if not os.path.exists(GEN_JSON):
 with open(GEN_JSON, 'r') as f:
     data = json.load(f)
 
-# --------------------------------
+
 # TOP NAVIGATION BAR
-# --------------------------------
 tabs = st.tabs([
     "Overview",
     "Performance Analysis",
@@ -72,9 +68,9 @@ tabs = st.tabs([
     "CoachBot"
 ])
 
-# --------------------------------
+
 # HELPER FUNCTIONS
-# --------------------------------
+
 def summarize_game_for_llm(data, fps=25):
     # Using your original variable names
     team_stats = defaultdict(lambda: {
@@ -185,9 +181,7 @@ with tabs[0]:
             st.info("Processed video will appear here after analysis.")
 
 
-# --------------------------------
 # TAB 2: PERFORMANCE ANALYSIS
-# --------------------------------
 with tabs[1]:
     st.title("Performance Analysis")
 
@@ -252,7 +246,6 @@ with tabs[1]:
             "Team Average": [np.mean(team_data[p_stats['team']]['distances']) * 3600 * 30] * len(p_stats["speeds"])
         })
         
-        # intensity highlights: How often were they above 15km/h?
         st.line_chart(speed_df)
         
         intensity_frames = len([s for s in p_stats["speeds"] if s > 15])
@@ -276,16 +269,14 @@ with tabs[1]:
     rank_df = pd.DataFrame(rank_list).sort_values(by="Distance (m)", ascending=False)
     st.dataframe(rank_df, use_container_width=True, hide_index=True)
 
-# --------------------------------
+
 # TAB 3: SPATIAL & NETWORK ANALYSIS
-# --------------------------------
 with tabs[2]:
     st.title("Spatial & Network Analysis")
 
     # ---- 1. HEATMAP SECTION (PLAYER & TEAM) ----
     st.subheader("Field Coverage & Occupancy")
     
-    # Selection logic for Heatmaps
     h_col1, h_col2 = st.columns([1, 3])
     with h_col1:
         mode = st.radio("Heatmap Mode", ["Individual Player", "Full Team"])
@@ -310,11 +301,8 @@ with tabs[2]:
 
     with h_col2:
         fig, ax = plt.subplots(figsize=(10, 6))
-        # Use a more sophisticated hexbin or gaussian kde for a 'pro' look
         hb = ax.hexbin(coords[:, 0], coords[:, 1], gridsize=20, cmap='YlOrRd', mincnt=1)
-        
-        # ADDING COURT OVERLAY (Simplified)
-        # Assuming coordinates are normalized to tactical view dimensions (e.g., 28m x 15m)
+
         ax.set_xlim(0, 28); ax.set_ylim(0, 15)
         ax.axvline(14, color='white', linestyle='--', alpha=0.5) # Half court
         plt.colorbar(hb, label='Time Spent in Zone')
@@ -368,9 +356,8 @@ with tabs[2]:
         else:
             st.warning("No pass sequences detected to build network.")
 
-# --------------------------------
+
 # TAB 4: COACHBOT
-# --------------------------------
 with tabs[3]:
     st.title("AI CoachBot")
 
@@ -378,7 +365,7 @@ with tabs[3]:
     question = st.text_area("Ask the coach:")
 
     if st.button("Ask Coach") and question:
-        client = Groq(api_key=APIKEY)
+        client = Groq(api_key=os.getenv("APIKEY")
 
         prompt = f"""
         You are 'CoachAI', an elite Tactical Analyst for an NBA team. 
