@@ -10,4 +10,8 @@ transformers>=4.46.3
 ultralytics>=8.3.67
 streamlit
 scikit-learn
-mplbasketball
+matplotlib
+json
+os
+networkx
+collections
